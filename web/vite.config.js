@@ -1,22 +1,17 @@
-import { defineConfig } from 'vite'
-import reactRefresh from '@vitejs/plugin-react-refresh'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-
-  logLevel: 'info',
-
-  plugins: [reactRefresh()],
+  plugins: [react()],
   server: {
-    host: process.env.VITE_HOST || null,
-    port: process.env.VITE_PORT || null,
-    hmr: {
-      clientPort: process.env.VITE_CLIENT_PORT || null
-    },
+    host: '0.0.0.0',
+    port: 5173,
     proxy: {
-      '^/api': {
-        target: 'http://api',
-        changeOrigin: true
-      }
-    }
-  }
-})
+      '/api': {
+        target: 'http://api:5000',
+        changeOrigin: true,
+      },
+    },
+  },
+});
+

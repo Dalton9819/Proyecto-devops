@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ./api
+    container_name: avatares-devops-api
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+
+  web:
+    build:
+      context: ./web
+    container_name: avatares-devops-web
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+

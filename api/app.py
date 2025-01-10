@@ -1,18 +1,17 @@
 import logging
-
 import flask
 import pathlib
-
 import python_avatars as pa
+from flask_cors import CORS  # Importar Flask-CORS para habilitar CORS
 
 logging.getLogger('werkzeug').setLevel(logging.WARN)
 
 app = flask.Flask("avatars-api")
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})  # Habilitar CORS para el frontend
 
 part_groups = {
     'facial_features': ['eyebrows', 'eyes', 'mouth', 'skin_color'],
     'hair': ['top', 'hair_color', 'facial_hair', 'facial_hair_color'],
-
 }
 
 part_mapping = {
