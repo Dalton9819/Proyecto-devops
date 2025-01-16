@@ -22,7 +22,7 @@ pipeline {
                 dir('api') {
                     script {
                         // Construye la imagen usando el Dockerfile dentro de 'api'
-                        sh 'docker build -f Dockerfile -t $DOCKERFILE_API:$DOCKER_TAG .'
+                        sh 'docker build -f Dockerfile -t $DOCKER_IMAGE_API:$DOCKER_TAG .'
                     }
                 }
             }
@@ -33,7 +33,7 @@ pipeline {
                 dir('web') {
                     script {
                         // Construye la imagen usando el Dockerfile dentro de 'web'
-                        sh 'docker build -f Dockerfile -t $DOCKERFILE_WEB:$DOCKER_TAG .'
+                        sh 'docker build -f Dockerfile -t $DOCKER_IMAGE_WEB:$DOCKER_TAG .'
                     }
                 }
             }
