@@ -4,6 +4,8 @@ pipeline {
     environment {
         DOCKER_IMAGE_API = 'dalton9819/avatars-backend'
         DOCKER_IMAGE_WEB = 'dalton9819/avatars-frontend'
+        DOCKERFILE_API = 'Proyecto-devops/api'
+        DOCKERFILE_WEB = 'Proyecto-devops/web'
         DOCKER_TAG = '0.0.2'
         DOCKER_CREDENTIALS = 'dockerhub-credentials'
     }
@@ -19,7 +21,8 @@ pipeline {
             steps {
                 dir('api') {
                     script {
-                        sh 'docker build -t $DOCKER_IMAGE_API:$DOCKER_TAG .'
+                        // Construye la imagen usando el Dockerfile dentro de 'api'
+                        sh 'docker build -f Dockerfile -t $DOCKERFILE_API:$DOCKER_TAG .'
                     }
                 }
             }
@@ -29,7 +32,8 @@ pipeline {
             steps {
                 dir('web') {
                     script {
-                        sh 'docker build -t $DOCKER_IMAGE_WEB:$DOCKER_TAG .'
+                        // Construye la imagen usando el Dockerfile dentro de 'web'
+                        sh 'docker build -f Dockerfile -t $DOCKERFILE_WEB:$DOCKER_TAG .'
                     }
                 }
             }
@@ -38,6 +42,7 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 withDockerRegistry([credentialsId: "$DOCKER_CREDENTIALS", url: 'https://index.docker.io/v1/']) {
+                    // Empuja las imágenes a Docker Hub
                     sh 'docker push $DOCKER_IMAGE_API:$DOCKER_TAG'
                     sh 'docker push $DOCKER_IMAGE_WEB:$DOCKER_TAG'
                 }
@@ -47,6 +52,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
+                    // Aplica los manifiestos de Kubernetes
                     sh 'kubectl apply -f backend-deployment.yaml'
                     sh 'kubectl apply -f frontend-deployment.yaml'
                 }
