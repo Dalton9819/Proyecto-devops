@@ -12,12 +12,13 @@ spec:
     metadata:
       labels:
         app: backend
-    spec:
-      containers:
-      - name: backend
-        image: proyectodevops98/avatars-backend:IMAGE_TAG
-        ports:
-        - containerPort: 5000
+  spec:
+    containers:
+    - name: backend
+      image: proyectodevops98/avatars-backend:IMAGE_TAG
+      ports:
+      - containerPort: 5000  # Puerto de la aplicación
+      - containerPort: 8000  # Puerto de métricas
 ---
 apiVersion: v1
 kind: Service
@@ -31,5 +32,7 @@ spec:
   - protocol: TCP
     port: 5000
     targetPort: 5000
-  type: ClusterIP
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
 
