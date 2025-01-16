@@ -3,21 +3,11 @@ import flask
 import pathlib
 import python_avatars as pa
 from flask_cors import CORS  # Importar Flask-CORS para habilitar CORS
-from prometheus_client import Counter, start_http_server
 
 logging.getLogger('werkzeug').setLevel(logging.WARN)
 
 app = flask.Flask("avatars-api")
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})  # Habilitar CORS para el frontend
-
-# Exportador HTTP de Prometheus
-start_http_server(8000)  # Servidor para métricas de Prometheus en el puerto 8000
-
-# Definir métricas
-REQUEST_COUNT = Counter(
-    'api_request_count', 'Cantidad de solicitudes recibidas',
-    ['method', 'endpoint']
-)
 
 part_groups = {
     'facial_features': ['eyebrows', 'eyes', 'mouth', 'skin_color'],
@@ -52,10 +42,6 @@ def initialize():
     except AttributeError:
         pa.install_part(str(pathlib.Path(__file__).parent.joinpath('tilt_shirt.svg')), pa.ClothingType)
 
-@app.before_request
-def before_request():
-    # Incrementar el contador de solicitudes para cada endpoint
-    REQUEST_COUNT.labels(method=flask.request.method, endpoint=flask.request.path).inc()
 
 @app.route('/api/avatar')
 def avatar():
@@ -66,10 +52,10 @@ def avatar():
             continue
         part_enum = getattr(pa, part_mapping[p])
         try:
-            # enum by name, e.g. `BLACK`
+            # enum by name, e.g. BLACK
             params[p] = part_enum[params[p]]
         except KeyError:
-            # enum by value, e.g. `#262E33`
+            # enum by value, e.g. #262E33
             params[p] = part_enum(params[p])
 
     clothing = 'tilt_shirt'
@@ -88,6 +74,7 @@ def avatar():
         **params
     ).render()
     return flask.Response(svg, mimetype='image/svg+xml')
+
 
 @app.route('/api/avatar/spec')
 def avatar_spec():
@@ -113,10 +100,7 @@ def avatar_spec():
 
     return flask.jsonify(resp)
 
+
 @app.route('/ready')
 def ready():
     return flask.Response('', status=204)
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
-
