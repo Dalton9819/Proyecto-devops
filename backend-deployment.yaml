@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: proyectodevops98/avatars-frontend:IMAGE_TAG
+        image: proyectodevops98/avatars-backend:IMAGE_TAG
         ports:
         - containerPort: 5000
 ---
