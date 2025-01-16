@@ -2,14 +2,22 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_REPO = 'proyectodevops98'
-        DOCKER_IMAGE_API = "${DOCKER_REPO}/avatars-backend"
-        DOCKER_IMAGE_WEB = "${DOCKER_REPO}/avatars-frontend"
-        DOCKER_TAG = '0.0.3'
+        DOCKER_IMAGE_API = 'proyectodevops98/avatars-backend'
+        DOCKER_IMAGE_WEB = 'proyectodevops98/avatars-frontend'
+        DOCKER_REPO = 'proyectodevops98/avatars'
         DOCKER_CREDENTIALS = 'dockerhub-credentials'
     }
 
     stages {
+        stage('Input Tag') {
+            steps {
+                script {
+                    // Solicitar al usuario el tag de la imagen
+                    DOCKER_TAG = input message: 'Ingrese el tag de la imagen (e.g., 0.0.3)', parameters: [string(defaultValue: '0.0.3', description: 'Tag de la imagen', name: 'DOCKER_TAG')]
+                }
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -20,8 +28,7 @@ pipeline {
             steps {
                 dir('api') {
                     script {
-                        // Construye la imagen usando el Dockerfile dentro de 'api'
-                        sh 'docker build -f Dockerfile -t $DOCKER_IMAGE_API:$DOCKER_TAG .'
+                        sh "docker build -f Dockerfile -t $DOCKER_IMAGE_API:$DOCKER_TAG ."
                     }
                 }
             }
@@ -31,8 +38,7 @@ pipeline {
             steps {
                 dir('web') {
                     script {
-                        // Construye la imagen usando el Dockerfile dentro de 'web'
-                        sh 'docker build -f Dockerfile -t $DOCKER_IMAGE_WEB:$DOCKER_TAG .'
+                        sh "docker build -f Dockerfile -t $DOCKER_IMAGE_WEB:$DOCKER_TAG ."
                     }
                 }
             }
@@ -41,9 +47,8 @@ pipeline {
         stage('Push Docker Images') {
             steps {
                 withDockerRegistry([credentialsId: "$DOCKER_CREDENTIALS", url: 'https://index.docker.io/v1/']) {
-                    // Empuja las imágenes a Docker Hub
-                    sh 'docker push $DOCKER_IMAGE_API:$DOCKER_TAG'
-                    sh 'docker push $DOCKER_IMAGE_WEB:$DOCKER_TAG'
+                    sh "docker push $DOCKER_IMAGE_API:$DOCKER_TAG"
+                    sh "docker push $DOCKER_IMAGE_WEB:$DOCKER_TAG"
                 }
             }
         }
@@ -51,7 +56,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    // Aplica los manifiestos de Kubernetes
+                    sh "sed -i 's#IMAGE_TAG#$DOCKER_TAG#g' backend-deployment.yaml"
+                    sh "sed -i 's#IMAGE_TAG#$DOCKER_TAG#g' frontend-deployment.yaml"
                     sh 'kubectl apply -f backend-deployment.yaml'
                     sh 'kubectl apply -f frontend-deployment.yaml'
                 }
@@ -64,11 +70,10 @@ pipeline {
             cleanWs()
         }
         success {
-            echo 'Pipeline executed successfully!'
+            echo 'Pipeline ejecutado correctamente!'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'Pipeline falló!'
         }
     }
 }
-
