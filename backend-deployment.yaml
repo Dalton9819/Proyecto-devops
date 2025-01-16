@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: dalton9819/avatars-backend:latest
+        image: proyectodevops98/avatars-frontend:0.0.2
         ports:
         - containerPort: 5000
 ---
