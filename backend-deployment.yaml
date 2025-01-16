@@ -29,11 +29,11 @@ spec:
   selector:
     app: backend
   ports:
-  - name: http  # Se agrega el nombre al puerto HTTP
+  - name: http  # Nombre único para el puerto HTTP
     protocol: TCP
     port: 5000
     targetPort: 5000
-  - name: metrics  # Se agrega el nombre al puerto de métricas
+  - name: metrics-8000  # Nombre único para el puerto de métricas
     protocol: TCP
     port: 8000
     targetPort: 8000
