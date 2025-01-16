@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE_API = 'avatars-backend'
         DOCKER_IMAGE_WEB = 'avatars-frontend'
         DOCKER_REPO = 'proyectodevops98/avatars'
-        DOCKER_TAG = '0.0.2'
+        DOCKER_TAG = '0.0.3'
         DOCKER_CREDENTIALS = 'dockerhub-credentials'
     }
 
