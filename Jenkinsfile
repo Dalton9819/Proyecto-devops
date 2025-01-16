@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE_API = 'dalton9819/avatars-backend'
-        DOCKER_IMAGE_WEB = 'dalton9819/avatars-frontend'
-        DOCKERFILE_API = 'Proyecto-devops/api'
-        DOCKERFILE_WEB = 'Proyecto-devops/web'
+        DOCKER_IMAGE_API = 'avatars-backend'
+        DOCKER_IMAGE_WEB = 'avatars-frontend'
+        DOCKER_REPO = 'proyectodevops98/avatars'
         DOCKER_TAG = '0.0.2'
         DOCKER_CREDENTIALS = 'dockerhub-credentials'
     }
@@ -72,3 +71,4 @@ pipeline {
         }
     }
 }
+
